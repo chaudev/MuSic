@@ -1,8 +1,10 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, LogBox} from 'react-native';
 
 import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
 import {HomeScreen} from './src';
+
+LogBox.ignoreAllLogs();
 
 const App = () => {
   requestMultiple([PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE]).then(

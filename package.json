@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@astrocoders/react-native-selectable-text": "^1.5.1",
+    "@react-native-async-storage/async-storage": "^1.15.5",
+    "@react-native-community/slider": "^3.0.3",
     "react": "17.0.1",
     "react-native": "0.64.2",
     "react-native-get-music-files": "^2.1.0",
     "react-native-get-music-files-v3dev-test": "^3.1.5",
     "react-native-permissions": "^3.0.5",
-    "react-native-sound": "^0.11.0"
+    "react-native-sound": "^0.11.0",
+    "react-native-vector-icons": "^8.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

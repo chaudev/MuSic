@@ -1,5 +1,13 @@
 import React from 'react';
-import {TouchableOpacity, View, Text, Image} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  Modal,
+  Animated,
+} from 'react-native';
+import {settings} from '../../config';
 
 const RenderItem = ({item, onClick, now}) => {
   const click = () => {
