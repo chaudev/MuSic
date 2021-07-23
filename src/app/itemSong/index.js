@@ -8,6 +8,10 @@ import {
   Animated,
 } from 'react-native';
 import {settings} from '../../config';
+import MusicFiles, {
+  Constants,
+  CoverImage,
+} from 'react-native-get-music-files-v3dev-test';
 
 const RenderItem = ({item, onClick, now}) => {
   const click = () => {
@@ -43,10 +47,14 @@ const RenderItem = ({item, onClick, now}) => {
           style={{
             width: 50,
             height: 50,
-            backgroundColor: '#000',
             borderRadius: 500,
-          }}
-        />
+          }}>
+          <Image
+            resizeMode="contain"
+            source={require('../../app/assets/images/disk.png')}
+            style={{width: 50, height: 50}}
+          />
+        </View>
         <View style={{flex: 1, marginLeft: 10}}>
           <Text numberOfLines={1} style={{fontSize: 16}}>
             {item?.title}

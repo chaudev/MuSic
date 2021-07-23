@@ -18,6 +18,8 @@ target 'MuSic' do
 
   pod 'react-native-get-music-files', :path => '../node_modules/react-native-get-music-files-v3dev-test'
 
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+
   target 'MuSicTests' do
     inherit! :complete
     # Pods for testing

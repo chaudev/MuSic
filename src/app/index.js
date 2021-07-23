@@ -10,16 +10,18 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
 import MusicFiles, {
   Constants,
   CoverImage,
 } from 'react-native-get-music-files-v3dev-test';
+import BackgroundTimer from 'react-native-background-timer';
 import {RenderItem} from './itemSong';
+import {RenderItemType} from './itemType';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Slider from '@react-native-community/slider';
+import {getCurrentSong, saveCurrentSong} from './appSetting';
 
 var Sound = require('react-native-sound');
 import {settings} from '../config';
@@ -52,6 +54,8 @@ export const HomeScreen = () => {
   const [dur, setDur] = useState(0);
   const [cur, setCur] = useState(0);
 
+  const [type, setType] = useState('Tất cả');
+
   Animated.timing(spinValue, {
     toValue: cur / 60,
     duration: 3000,
@@ -67,7 +71,14 @@ export const HomeScreen = () => {
 
   useEffect(() => {
     getAllSongs();
+    getSong();
   }, []);
+
+  const getSong = async () => {
+    const mu = await getCurrentSong();
+    console.log(mu);
+    setPlaying(mu);
+  };
 
   const playMu = data => {
     initInterval();
@@ -92,6 +103,8 @@ export const HomeScreen = () => {
           whoosh.getNumberOfChannels(),
       );
 
+      saveCurrentSong(data);
+
       // Play the sound with an onEnd callback
       whoosh.play(success => {
         if (success) {
@@ -105,7 +118,7 @@ export const HomeScreen = () => {
       setDur(parseInt(whoosh.getDuration().toFixed(0)));
       ys = parseInt(whoosh.getDuration().toFixed(0));
 
-      interVal = setInterval(() => {
+      BackgroundTimer.runBackgroundTimer(() => {
         xs++;
         setCurrent(toHHMMSS(xs));
         setCur(xs);
@@ -123,7 +136,7 @@ export const HomeScreen = () => {
     setCur(0);
     setDur(0);
     xs = 0;
-    clearInterval(interVal);
+    BackgroundTimer.stopBackgroundTimer();
   };
 
   var toHHMMSS = secs => {
@@ -154,18 +167,30 @@ export const HomeScreen = () => {
     if (whoosh !== undefined && !isPause) {
       setIsPause(true);
       whoosh.pause();
+
+      BackgroundTimer.stopBackgroundTimer();
     }
 
     if (whoosh !== undefined && isPause) {
       setIsPause(false);
       whoosh.play();
+
+      BackgroundTimer.runBackgroundTimer(() => {
+        xs++;
+        setCurrent(toHHMMSS(xs));
+        setCur(xs);
+        if (xs >= ys) {
+          initInterval();
+          nextSong();
+        }
+      }, 1000);
     }
   };
 
   const getAllSongs = () => {
     MusicFiles.getAll({
       title: true,
-      cover: false,
+      cover: true,
       batchSize: 0,
       batchNumber: 0,
       minimumSongDuration: 6600,
@@ -181,6 +206,10 @@ export const HomeScreen = () => {
       });
   };
 
+  const clickType = i => {
+    setType(i.title);
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: settings.colors.mainColor}}>
       <View
@@ -189,8 +218,58 @@ export const HomeScreen = () => {
           backgroundColor: settings.colors.mainColor,
           borderBottomWidth: 0.5,
           borderColor: '#ECEFF1',
-        }}></View>
-      {songs !== '' && (
+          paddingHorizontal: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <TouchableOpacity
+          style={{
+            width: 40,
+            height: 40,
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+          }}>
+          <Ionicons name="menu" size={30} color={settings.colors.secondColor} />
+        </TouchableOpacity>
+        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Master MuSic</Text>
+        <View style={{flex: 1}} />
+        <TouchableOpacity
+          style={{
+            width: 40,
+            height: 40,
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+          }}>
+          <Ionicons
+            name="search"
+            size={26}
+            color={settings.colors.secondColor}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={{
+          height: 40,
+          backgroundColor: settings.colors.mainColor,
+          borderBottomWidth: 0.5,
+          borderColor: '#ECEFF1',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <FlatList
+          data={[{title: 'Tất cả'}, {title: 'Yêu thích'}]}
+          horizontal
+          renderItem={({item}) => (
+            <RenderItemType item={item} now={type} onClick={clickType} />
+          )}
+          keyExtractor={item => {
+            return item?.title;
+          }}
+          style={{flex: 1}}
+        />
+      </View>
+      {songs !== '' ? (
         <FlatList
           data={songs}
           renderItem={({item}) => (
@@ -201,6 +280,8 @@ export const HomeScreen = () => {
           }}
           style={{flex: 1}}
         />
+      ) : (
+        <View style={{flex: 1}}></View>
       )}
 
       <TouchableOpacity
@@ -227,10 +308,14 @@ export const HomeScreen = () => {
             style={{
               width: 40,
               height: 40,
-              backgroundColor: '#000',
               borderRadius: 500,
-            }}
-          />
+            }}>
+            <Image
+              resizeMode="contain"
+              source={require('../app/assets/images/disk.png')}
+              style={{width: 40, height: 40}}
+            />
+          </View>
           <View style={{flex: 1, marginLeft: 10}}>
             <Text numberOfLines={1} style={{fontSize: 16}}>
               {playing?.title}
@@ -356,15 +441,6 @@ export const HomeScreen = () => {
                 }}
               />
             </Animated.View>
-            {/* <Image
-              resizeMode="contain"
-              source={require('../app/assets/images/disk.png')}
-              style={{
-                width: '100%',
-                height: undefined,
-                aspectRatio: 1.2,
-              }}
-            /> */}
           </View>
 
           <View

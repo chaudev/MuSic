@@ -4,6 +4,8 @@ import {View, LogBox} from 'react-native';
 import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
 import {HomeScreen} from './src';
 
+// npx react-native run-android
+
 LogBox.ignoreAllLogs();
 
 const App = () => {
