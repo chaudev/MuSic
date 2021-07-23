@@ -1,3 +1,5 @@
 # MuSic
 
-```git clone https://github.com/chaudev/MuSic```
+```
+git clone https://github.com/chaudev/MuSic
+```
