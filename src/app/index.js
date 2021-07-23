@@ -10,33 +10,29 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import MusicFiles, {
-  Constants,
-  CoverImage,
-} from 'react-native-get-music-files-v3dev-test';
+import {main, modal} from './css';
+import MusicFiles, {Constants} from 'react-native-get-music-files-v3dev-test';
 import BackgroundTimer from 'react-native-background-timer';
 import {RenderItem} from './itemSong';
 import {RenderItemType} from './itemType';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Slider from '@react-native-community/slider';
 import {getCurrentSong, saveCurrentSong} from './appSetting';
+import {
+  settings,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '../config';
+import {toHHMMSS} from './function';
 
 var Sound = require('react-native-sound');
-import {settings} from '../config';
 
-// Enable playback in silence mode
 Sound.setCategory('Playback');
 
 var whoosh = undefined;
 
 let xs = 0;
 let ys = 50;
-
-let interVal = '';
-
-let ro = '';
 
 let spinValue = new Animated.Value(0);
 
@@ -139,18 +135,6 @@ export const HomeScreen = () => {
     BackgroundTimer.stopBackgroundTimer();
   };
 
-  var toHHMMSS = secs => {
-    var sec_num = parseInt(secs, 10);
-    var hours = Math.floor(sec_num / 3600);
-    var minutes = Math.floor(sec_num / 60) % 60;
-    var seconds = sec_num % 60;
-
-    return [hours, minutes, seconds]
-      .map(v => (v < 10 ? '0' + v : v))
-      .filter((v, i) => v !== '00' || i > 0)
-      .join(':');
-  };
-
   const nextSong = () => {
     initInterval();
     const currentSong = songs.indexOf(playing);
@@ -198,7 +182,6 @@ export const HomeScreen = () => {
       sortOrder: Constants.SortOrder.Ascending,
     })
       .then(tracks => {
-        // console.log(tracks);
         setSongs(tracks.results);
       })
       .catch(error => {
@@ -212,34 +195,13 @@ export const HomeScreen = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: settings.colors.mainColor}}>
-      <View
-        style={{
-          height: 50,
-          backgroundColor: settings.colors.mainColor,
-          borderBottomWidth: 0.5,
-          borderColor: '#ECEFF1',
-          paddingHorizontal: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          style={{
-            width: 40,
-            height: 40,
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-          }}>
+      <View style={main.container}>
+        <TouchableOpacity style={main.menuButton}>
           <Ionicons name="menu" size={30} color={settings.colors.secondColor} />
         </TouchableOpacity>
-        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Master MuSic</Text>
+        <Text style={main.textAppName}>Master MuSic</Text>
         <View style={{flex: 1}} />
-        <TouchableOpacity
-          style={{
-            width: 40,
-            height: 40,
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-          }}>
+        <TouchableOpacity style={main.searchButton}>
           <Ionicons
             name="search"
             size={26}
@@ -248,15 +210,7 @@ export const HomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View
-        style={{
-          height: 40,
-          backgroundColor: settings.colors.mainColor,
-          borderBottomWidth: 0.5,
-          borderColor: '#ECEFF1',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+      <View style={main.tabMenu}>
         <FlatList
           data={[{title: 'Tất cả'}, {title: 'Yêu thích'}]}
           horizontal
@@ -290,26 +244,9 @@ export const HomeScreen = () => {
           setShowModal(true);
         }}
         activeOpacity={0.85}
-        style={{
-          backgroundColor: settings.colors.mainColor,
-          width: '100%',
-          height: 50,
-          borderTopWidth: 0.5,
-          borderColor: '#ECEFF1',
-        }}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-          }}>
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 500,
-            }}>
+        style={main.controlContainer}>
+        <View style={main.control}>
+          <View style={main.controlImage}>
             <Image
               resizeMode="contain"
               source={require('../app/assets/images/disk.png')}
@@ -324,24 +261,12 @@ export const HomeScreen = () => {
               {playing?.artist}
             </Text>
           </View>
-          <View
-            style={{
-              height: 40,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
+          <View style={main.controlButton}>
             <TouchableOpacity
               onPress={() => {
                 pauseSong();
               }}
-              style={{
-                width: 40,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 5,
-                paddingLeft: 10,
-              }}>
+              style={main.controlPlay}>
               {isPause ? (
                 <FontAwesome5
                   name="play"
@@ -360,12 +285,7 @@ export const HomeScreen = () => {
               onPress={() => {
                 nextSong();
               }}
-              style={{
-                width: 30,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              style={main.controlNext}>
               <Ionicons
                 name="play-skip-forward"
                 size={22}
@@ -378,49 +298,24 @@ export const HomeScreen = () => {
 
       <Modal visible={showModal} animationType="slide">
         <View style={{flex: 1}}>
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              height: 50,
-            }}>
+          <View style={modal.header}>
             <TouchableOpacity
               onPress={() => {
                 setShowModal(false);
               }}
-              style={{
-                width: 50,
-                height: 50,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                paddingLeft: 10,
-              }}>
+              style={modal.leftButton}>
               <Ionicons
                 name="ios-chevron-back-outline"
                 size={24}
                 color={settings.colors.secondColor}
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                flex: 1,
-                textAlign: 'center',
-                fontWeight: 'bold',
-              }}>
-              ĐANG PHÁT
-            </Text>
+            <Text style={modal.title}>ĐANG PHÁT</Text>
             <TouchableOpacity
               onPress={() => {
                 setShowModal(false);
               }}
-              style={{
-                width: 50,
-                height: 50,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                paddingLeft: 10,
-              }}>
+              style={modal.rightButton}>
               <MaterialCommunityIcons
                 name="playlist-music-outline"
                 size={24}
