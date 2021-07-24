@@ -7,7 +7,12 @@ import {
   Modal,
   Animated,
 } from 'react-native';
-import {settings} from '../../config';
+import {
+  settings,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '../../config';
 import MusicFiles, {
   Constants,
   CoverImage,
@@ -67,8 +72,16 @@ const RenderItem = ({item, onClick, now}) => {
           style={{
             width: 40,
             height: 40,
+            alignItems: 'flex-end',
+            justifyContent: 'center',
           }}>
-          {isPlaying() && <Text>PLAYING</Text>}
+          {isPlaying() && (
+            <MaterialCommunityIcons
+              name="music-note-eighth"
+              size={22}
+              color={settings.colors.secondColor}
+            />
+          )}
         </View>
       </View>
     </TouchableOpacity>

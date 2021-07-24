@@ -1,10 +1,8 @@
 import React from 'react';
-import {View, LogBox} from 'react-native';
-
+import {LogBox} from 'react-native';
 import {requestMultiple, PERMISSIONS} from 'react-native-permissions';
-import {HomeScreen} from './src';
-
-// npx react-native run-android
+import {Draw} from './src';
+import {NavigationContainer} from '@react-navigation/native';
 
 LogBox.ignoreAllLogs();
 
@@ -19,9 +17,9 @@ const App = () => {
   );
 
   return (
-    <View style={{flex: 1}}>
-      <HomeScreen />
-    </View>
+    <NavigationContainer>
+      <Draw />
+    </NavigationContainer>
   );
 };
 

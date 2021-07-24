@@ -2,6 +2,7 @@ import {Dimensions} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const {width: dW, height: dH} = Dimensions.get('window');
 
@@ -12,4 +13,12 @@ const settings = {
   },
 };
 
-export {dW, dH, settings, FontAwesome5, Ionicons, MaterialCommunityIcons};
+export {
+  dW,
+  dH,
+  settings,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+  AntDesign,
+};

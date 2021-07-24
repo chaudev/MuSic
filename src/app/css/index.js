@@ -22,6 +22,7 @@ const main = StyleSheet.create({
   textAppName: {
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'SVN-Olivier',
   },
   searchButton: {
     width: 40,

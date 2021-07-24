@@ -7,6 +7,8 @@ import com.facebook.react.ReactApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.GetMusicFiles.GetMusicFiles;
 import com.cinder92.musicfiles.RNReactNativeGetMusicFilesPackage;
+import com.facebook.react.bridge.JSIModulePackage; // <- add
+import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -30,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
 //           packages.add(new RNReactNativeGetMusicFilesPackage());
+            new ReanimatedJSIModulePackage();
 
           return packages;
         }

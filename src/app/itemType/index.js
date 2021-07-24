@@ -37,7 +37,14 @@ const RenderItemType = ({item, onClick, now}) => {
           ? settings.colors.secondColor
           : settings.colors.mainColor,
       }}>
-      <Text style={{fontSize: 16}}>{item.title}</Text>
+      <Text
+        style={{
+          fontSize: isPlaying() ? 16 : 14,
+          color: isPlaying() ? settings.colors.secondColor : 'grey',
+          fontWeight: isPlaying() ? 'bold' : '100',
+        }}>
+        {item.title}
+      </Text>
     </TouchableOpacity>
   );
 };

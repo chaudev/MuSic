@@ -9,6 +9,7 @@ import {
   Modal,
   Animated,
   Easing,
+  StatusBar,
 } from 'react-native';
 import {main, modal} from './css';
 import MusicFiles, {Constants} from 'react-native-get-music-files-v3dev-test';
@@ -16,14 +17,23 @@ import BackgroundTimer from 'react-native-background-timer';
 import {RenderItem} from './itemSong';
 import {RenderItemType} from './itemType';
 import Slider from '@react-native-community/slider';
-import {getCurrentSong, saveCurrentSong} from './appSetting';
+import {
+  getCurrentSong,
+  saveCurrentSong,
+  savePlaylist,
+  getPlaylist,
+  saveFavourite,
+  getFavourite,
+} from './appSetting';
 import {
   settings,
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
+  AntDesign,
 } from '../config';
 import {toHHMMSS} from './function';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 
 var Sound = require('react-native-sound');
 
@@ -37,10 +47,14 @@ let ys = 50;
 let spinValue = new Animated.Value(0);
 
 export const HomeScreen = () => {
+  const nav = useNavigation();
+  const focused = useIsFocused();
+
   const sortBy = Constants.SortBy.Title;
   const sortOrder = Constants.SortOrder.Ascending;
 
   const [songs, setSongs] = useState('');
+  const [songIDs, setSongIDs] = useState('');
   const [playing, setPlaying] = useState('');
   const [isPause, setIsPause] = useState(true);
 
@@ -51,12 +65,14 @@ export const HomeScreen = () => {
   const [cur, setCur] = useState(0);
 
   const [type, setType] = useState('Tất cả');
+  const [curType, setCurType] = useState(0);
+  const [faMu, setFaMu] = useState('');
 
   Animated.timing(spinValue, {
     toValue: cur / 60,
     duration: 3000,
-    easing: Easing.linear, // Easing is an additional import from react-native
-    useNativeDriver: true, // To make use of native driver for performance
+    easing: Easing.linear,
+    useNativeDriver: true,
   }).start();
 
   // Next, interpolate beginning and end values (in this case 0 and 1)
@@ -66,14 +82,54 @@ export const HomeScreen = () => {
   });
 
   useEffect(() => {
-    getAllSongs();
+    console.log(focused);
+    // if (focused) {
+    //   <StatusBar
+    //     backgroundColor={settings.colors.mainColor}
+    //     barStyle="dark-content"
+    //   />;
+    // } else {
+    //   <StatusBar
+    //     backgroundColor={settings.colors.secondColor}
+    //     barStyle="light-content"
+    //   />;
+    // }
+  }, [focused]);
+
+  useEffect(() => {
+    getSavedSongs();
     getSong();
+    getFaSongs();
+    getAllSongs();
   }, []);
+
+  useEffect(() => {
+    if (songs !== '') {
+      getSongIDs();
+    }
+  }, [songs]);
 
   const getSong = async () => {
     const mu = await getCurrentSong();
-    console.log(mu);
     setPlaying(mu);
+  };
+
+  const getSongIDs = async () => {
+    let temp = [];
+    for (let index = 0; index < songs.length; index++) {
+      temp.push(songs[index]?.id);
+    }
+    setSongIDs(temp);
+  };
+
+  const getSavedSongs = async () => {
+    const res = await getPlaylist();
+    setSongs(res);
+  };
+
+  const getFaSongs = async () => {
+    const res = await getFavourite();
+    setFaMu(res);
   };
 
   const playMu = data => {
@@ -122,7 +178,7 @@ export const HomeScreen = () => {
           initInterval();
           nextSong();
         }
-      }, 1000);
+      }, 500);
     });
   };
 
@@ -137,13 +193,13 @@ export const HomeScreen = () => {
 
   const nextSong = () => {
     initInterval();
-    const currentSong = songs.indexOf(playing);
+    const currentSong = songIDs.indexOf(playing?.id);
     playMu(songs[currentSong + 1]);
   };
 
   const reSong = () => {
     initInterval();
-    const currentSong = songs.indexOf(playing);
+    const currentSong = songIDs.indexOf(playing?.id);
     playMu(songs[currentSong - 1]);
   };
 
@@ -153,6 +209,11 @@ export const HomeScreen = () => {
       whoosh.pause();
 
       BackgroundTimer.stopBackgroundTimer();
+    }
+
+    if (playing !== '' && isPause && whoosh === undefined) {
+      setIsPause(false);
+      playMu(playing);
     }
 
     if (whoosh !== undefined && isPause) {
@@ -167,14 +228,15 @@ export const HomeScreen = () => {
           initInterval();
           nextSong();
         }
-      }, 1000);
+      }, 500);
     }
   };
 
   const getAllSongs = () => {
+    console.log('run');
     MusicFiles.getAll({
       title: true,
-      cover: true,
+      cover: false,
       batchSize: 0,
       batchNumber: 0,
       minimumSongDuration: 6600,
@@ -182,6 +244,8 @@ export const HomeScreen = () => {
       sortOrder: Constants.SortOrder.Ascending,
     })
       .then(tracks => {
+        // console.log(tracks.results[0]);
+        savePlaylist(tracks.results);
         setSongs(tracks.results);
       })
       .catch(error => {
@@ -191,15 +255,82 @@ export const HomeScreen = () => {
 
   const clickType = i => {
     setType(i.title);
+    if (i.title === 'Tất cả') {
+      setCurType(0);
+    }
+    if (i.title === 'Yêu thích') {
+      setCurType(1);
+    }
+  };
+
+  const favoirite = async () => {
+    await getFaSongs();
+    let temp = faMu;
+    let mxTemp = [];
+
+    if (faMu !== '' && faMu !== null && faMu !== undefined) {
+      for (let index = 0; index < faMu.length; index++) {
+        mxTemp.push(faMu[index]?.id);
+      }
+    }
+
+    if (faMu !== '' && faMu !== null && faMu !== undefined) {
+      let x = 0;
+      for (let i = 0; i < faMu.length; i++) {
+        if (faMu[i]?.id === playing?.id) {
+          x++;
+
+          console.log('faMu: ', faMu[0]);
+          console.log('playing: ', playing);
+
+          const index = mxTemp.indexOf(playing?.id);
+          console.log('indext: ', index);
+
+          if (index > -1) {
+            temp.splice(index, 1);
+          }
+        }
+      }
+      if (x === 0) {
+        await temp.push(playing);
+      }
+    } else {
+      temp = [];
+      await temp.push(playing);
+    }
+
+    saveFavourite(temp);
+    getFaSongs();
+  };
+
+  const checkFavourite = () => {
+    if (faMu !== '' && faMu !== null && faMu !== undefined) {
+      for (let i = 0; i < faMu.length; i++) {
+        if (faMu[i]?.id === playing?.id) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   return (
     <View style={{flex: 1, backgroundColor: settings.colors.mainColor}}>
       <View style={main.container}>
-        <TouchableOpacity style={main.menuButton}>
+        <StatusBar
+          backgroundColor={settings.colors.mainColor}
+          barStyle="dark-content"
+        />
+        <TouchableOpacity
+          onPress={() => {
+            nav.openDrawer();
+          }}
+          style={main.menuButton}>
           <Ionicons name="menu" size={30} color={settings.colors.secondColor} />
         </TouchableOpacity>
-        <Text style={main.textAppName}>Master MuSic</Text>
+        <Text style={[main.textAppName, {fontFamily: 'SVN-Olivier'}]}>
+          Master MuSic
+        </Text>
         <View style={{flex: 1}} />
         <TouchableOpacity style={main.searchButton}>
           <Ionicons
@@ -225,7 +356,7 @@ export const HomeScreen = () => {
       </View>
       {songs !== '' ? (
         <FlatList
-          data={songs}
+          data={curType === 0 ? songs : curType === 1 ? faMu : songs}
           renderItem={({item}) => (
             <RenderItem item={item} onClick={playMu} now={playing} />
           )}
@@ -238,6 +369,23 @@ export const HomeScreen = () => {
         <View style={{flex: 1}}></View>
       )}
 
+      <Slider
+        minimumValue={0}
+        maximumValue={dur}
+        minimumTrackTintColor={settings.colors.secondColor}
+        thumbTintColor={settings.colors.secondColor}
+        maximumTrackTintColor={settings.colors.secondColor}
+        thumbImage={require('../app/assets/images/none.png')}
+        value={cur}
+        style={{
+          marginBottom: -10,
+          marginTop: -10,
+          marginLeft: -16,
+          marginRight: -16,
+          zIndex: 99999,
+          backgroundColor: 'rgba(0,0,0,0)',
+        }}
+      />
       <TouchableOpacity
         activeOpacity={0.3}
         onPress={() => {
@@ -261,7 +409,26 @@ export const HomeScreen = () => {
               {playing?.artist}
             </Text>
           </View>
+
           <View style={main.controlButton}>
+            <TouchableOpacity
+              onPress={() => {
+                favoirite();
+              }}
+              style={[
+                modal.rightButton,
+                {alignItems: 'flex-end', paddingRight: 5},
+              ]}>
+              {!checkFavourite() ? (
+                <AntDesign name="heart" size={18} color={'#CFD8DC'} />
+              ) : (
+                <AntDesign
+                  name="heart"
+                  size={18}
+                  color={settings.colors.secondColor}
+                />
+              )}
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 pauseSong();
@@ -313,14 +480,18 @@ export const HomeScreen = () => {
             <Text style={modal.title}>ĐANG PHÁT</Text>
             <TouchableOpacity
               onPress={() => {
-                setShowModal(false);
+                favoirite();
               }}
               style={modal.rightButton}>
-              <MaterialCommunityIcons
-                name="playlist-music-outline"
-                size={24}
-                color={settings.colors.secondColor}
-              />
+              {!checkFavourite() ? (
+                <AntDesign name="heart" size={18} color={'#CFD8DC'} />
+              ) : (
+                <AntDesign
+                  name="heart"
+                  size={18}
+                  color={settings.colors.secondColor}
+                />
+              )}
             </TouchableOpacity>
           </View>
           <View
