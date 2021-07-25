@@ -20,6 +20,10 @@ target 'MuSic' do
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'MuSicTests' do
     inherit! :complete
     # Pods for testing

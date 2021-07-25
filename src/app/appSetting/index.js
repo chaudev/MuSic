@@ -80,6 +80,26 @@ const getTheme = async () => {
   }
 };
 
+// Save darkmode to cache
+const saveDarkmode = async theme => {
+  try {
+    const jsonValue = JSON.stringify(theme);
+    await AsyncStorage.setItem('dark', jsonValue);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// Get darkmode from cache
+const getDarkmode = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('dark');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 // Export function
 export {
   saveCurrentSong,
@@ -90,4 +110,6 @@ export {
   getFavourite,
   saveTheme,
   getTheme,
+  saveDarkmode,
+  getDarkmode,
 };

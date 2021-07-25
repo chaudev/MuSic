@@ -28,6 +28,10 @@
 		388698116F1247E5A07D79EE /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04E02D4EDCE342AAB3A7A27D /* Octicons.ttf */; };
 		1C9D937583EB4DBFB7FBBA58 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17FDB74908054067B999F5C2 /* SimpleLineIcons.ttf */; };
 		5F26F967435944F988EBEDB2 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C6110B7D872D49309278FD1F /* Zocial.ttf */; };
+		1B843488D8F843FAB73E46F9 /* SVN-Bariol.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 00A2B7581A5A49EA80919700 /* SVN-Bariol.ttf */; };
+		EDC482F844604E8D9EAA0C10 /* SVN-Comic Sans MS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 310358A09F6747878D59CD17 /* SVN-Comic Sans MS.ttf */; };
+		B8D30B469D6142A9BC3638B6 /* SVN-Helves.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAFD618068DB4A43A6695E67 /* SVN-Helves.ttf */; };
+		E092E38476D54DB3AE0CD7F2 /* SVN-Olivier.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A98B60CCC3A4D0FB1AEBC23 /* SVN-Olivier.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +72,10 @@
 		04E02D4EDCE342AAB3A7A27D /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		17FDB74908054067B999F5C2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		C6110B7D872D49309278FD1F /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		00A2B7581A5A49EA80919700 /* SVN-Bariol.ttf */ = {isa = PBXFileReference; name = "SVN-Bariol.ttf"; path = "../src/app/assets/fonts/SVN-Bariol.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		310358A09F6747878D59CD17 /* SVN-Comic Sans MS.ttf */ = {isa = PBXFileReference; name = "SVN-Comic Sans MS.ttf"; path = "../src/app/assets/fonts/SVN-Comic Sans MS.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DAFD618068DB4A43A6695E67 /* SVN-Helves.ttf */ = {isa = PBXFileReference; name = "SVN-Helves.ttf"; path = "../src/app/assets/fonts/SVN-Helves.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4A98B60CCC3A4D0FB1AEBC23 /* SVN-Olivier.ttf */ = {isa = PBXFileReference; name = "SVN-Olivier.ttf"; path = "../src/app/assets/fonts/SVN-Olivier.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +184,10 @@
 				04E02D4EDCE342AAB3A7A27D /* Octicons.ttf */,
 				17FDB74908054067B999F5C2 /* SimpleLineIcons.ttf */,
 				C6110B7D872D49309278FD1F /* Zocial.ttf */,
+				00A2B7581A5A49EA80919700 /* SVN-Bariol.ttf */,
+				310358A09F6747878D59CD17 /* SVN-Comic Sans MS.ttf */,
+				DAFD618068DB4A43A6695E67 /* SVN-Helves.ttf */,
+				4A98B60CCC3A4D0FB1AEBC23 /* SVN-Olivier.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -287,6 +299,10 @@
 				388698116F1247E5A07D79EE /* Octicons.ttf in Resources */,
 				1C9D937583EB4DBFB7FBBA58 /* SimpleLineIcons.ttf in Resources */,
 				5F26F967435944F988EBEDB2 /* Zocial.ttf in Resources */,
+				1B843488D8F843FAB73E46F9 /* SVN-Bariol.ttf in Resources */,
+				EDC482F844604E8D9EAA0C10 /* SVN-Comic Sans MS.ttf in Resources */,
+				B8D30B469D6142A9BC3638B6 /* SVN-Helves.ttf in Resources */,
+				E092E38476D54DB3AE0CD7F2 /* SVN-Olivier.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

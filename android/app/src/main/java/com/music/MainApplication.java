@@ -4,8 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.brentvatne.react.ReactVideoPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.GetMusicFiles.GetMusicFiles;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.cinder92.musicfiles.RNReactNativeGetMusicFilesPackage;
 import com.facebook.react.bridge.JSIModulePackage; // <- add
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add

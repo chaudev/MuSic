@@ -7,14 +7,7 @@ import {NavigationContainer} from '@react-navigation/native';
 LogBox.ignoreAllLogs();
 
 const App = () => {
-  requestMultiple([PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE]).then(
-    statuses => {
-      console.log(
-        'READ_EXTERNAL_STORAGE',
-        statuses[PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE],
-      );
-    },
-  );
+  requestMultiple([PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE]);
 
   return (
     <NavigationContainer>

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  StyleSheet,
   Text,
   TouchableOpacity,
   Image,
@@ -13,7 +12,6 @@ import {
 } from 'react-native';
 import {main, modal} from './css';
 import MusicFiles, {Constants} from 'react-native-get-music-files-v3dev-test';
-import BackgroundTimer from 'react-native-background-timer';
 import {RenderItem} from './itemSong';
 import {RenderItemType} from './itemType';
 import Slider from '@react-native-community/slider';
@@ -35,21 +33,12 @@ import {
 import {toHHMMSS} from './function';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 
-var Sound = require('react-native-sound');
-
-Sound.setCategory('Playback');
-
-var whoosh = undefined;
-
-let xs = 0;
-let ys = 50;
+import Video from 'react-native-video';
 
 let spinValue = new Animated.Value(0);
 
 export const HomeScreen = () => {
   const nav = useNavigation();
-  const focused = useIsFocused();
-
   const sortBy = Constants.SortBy.Title;
   const sortOrder = Constants.SortOrder.Ascending;
 
@@ -58,14 +47,13 @@ export const HomeScreen = () => {
   const [playing, setPlaying] = useState('');
   const [isPause, setIsPause] = useState(true);
 
+  const [isPlay, setIsPlay] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
-  const [currentTime, setCurrent] = useState('00:00');
-  const [duration, setDuration] = useState('00:00');
   const [dur, setDur] = useState(0);
   const [cur, setCur] = useState(0);
 
   const [type, setType] = useState('Tất cả');
-  const [curType, setCurType] = useState(0);
   const [faMu, setFaMu] = useState('');
 
   Animated.timing(spinValue, {
@@ -80,21 +68,6 @@ export const HomeScreen = () => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
-
-  useEffect(() => {
-    console.log(focused);
-    // if (focused) {
-    //   <StatusBar
-    //     backgroundColor={settings.colors.mainColor}
-    //     barStyle="dark-content"
-    //   />;
-    // } else {
-    //   <StatusBar
-    //     backgroundColor={settings.colors.secondColor}
-    //     barStyle="light-content"
-    //   />;
-    // }
-  }, [focused]);
 
   useEffect(() => {
     getSavedSongs();
@@ -133,68 +106,38 @@ export const HomeScreen = () => {
   };
 
   const playMu = data => {
-    initInterval();
     setPlaying(data);
     setIsPause(false);
-
-    if (whoosh !== undefined) {
-      whoosh.stop();
-    }
-
-    whoosh = new Sound(data?.path, Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        console.log('failed to load the sound', error);
-        return;
-      }
-
-      // loaded successfully
-      console.log(
-        'duration in seconds: ' +
-          whoosh.getDuration() +
-          'number of channels: ' +
-          whoosh.getNumberOfChannels(),
-      );
-
-      saveCurrentSong(data);
-
-      // Play the sound with an onEnd callback
-      whoosh.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
-
-      setDuration(toHHMMSS(whoosh.getDuration()));
-      setDur(parseInt(whoosh.getDuration().toFixed(0)));
-      ys = parseInt(whoosh.getDuration().toFixed(0));
-
-      BackgroundTimer.runBackgroundTimer(() => {
-        xs++;
-        setCurrent(toHHMMSS(xs));
-        setCur(xs);
-        if (xs >= ys) {
-          initInterval();
-          nextSong();
-        }
-      }, 500);
-    });
+    setIsPlay(true);
+    saveCurrentSong(data);
   };
 
   const initInterval = () => {
-    setDuration('00:00');
-    setCurrent('00:00');
     setCur(0);
     setDur(0);
-    xs = 0;
-    BackgroundTimer.stopBackgroundTimer();
   };
 
   const nextSong = () => {
     initInterval();
-    const currentSong = songIDs.indexOf(playing?.id);
-    playMu(songs[currentSong + 1]);
+    if (type === 'Tất cả') {
+      const currentSong = songIDs.indexOf(playing?.id);
+      if (currentSong < songs.length) {
+        playMu(songs[currentSong + 1]);
+      } else {
+        playMu(songs[0]);
+      }
+    } else {
+      let faID = [];
+      for (let index = 0; index < faMu.length; index++) {
+        faID.push(faMu[i]?.id);
+      }
+      const currentSong = faID.indexOf(playing?.id);
+      if (currentSong < faMu.length) {
+        playMu(faMu[currentSong + 1]);
+      } else {
+        playMu(faMu[0]);
+      }
+    }
   };
 
   const reSong = () => {
@@ -204,36 +147,14 @@ export const HomeScreen = () => {
   };
 
   const pauseSong = () => {
-    if (whoosh !== undefined && !isPause) {
-      setIsPause(true);
-      whoosh.pause();
-
-      BackgroundTimer.stopBackgroundTimer();
-    }
-
-    if (playing !== '' && isPause && whoosh === undefined) {
-      setIsPause(false);
-      playMu(playing);
-    }
-
-    if (whoosh !== undefined && isPause) {
-      setIsPause(false);
-      whoosh.play();
-
-      BackgroundTimer.runBackgroundTimer(() => {
-        xs++;
-        setCurrent(toHHMMSS(xs));
-        setCur(xs);
-        if (xs >= ys) {
-          initInterval();
-          nextSong();
-        }
-      }, 500);
+    if (playing !== '' && playing !== null && playing !== undefined) {
+      setIsPause(!isPause);
+    } else {
+      //
     }
   };
 
   const getAllSongs = () => {
-    console.log('run');
     MusicFiles.getAll({
       title: true,
       cover: false,
@@ -244,7 +165,6 @@ export const HomeScreen = () => {
       sortOrder: Constants.SortOrder.Ascending,
     })
       .then(tracks => {
-        // console.log(tracks.results[0]);
         savePlaylist(tracks.results);
         setSongs(tracks.results);
       })
@@ -255,12 +175,6 @@ export const HomeScreen = () => {
 
   const clickType = i => {
     setType(i.title);
-    if (i.title === 'Tất cả') {
-      setCurType(0);
-    }
-    if (i.title === 'Yêu thích') {
-      setCurType(1);
-    }
   };
 
   const favoirite = async () => {
@@ -314,13 +228,34 @@ export const HomeScreen = () => {
     return false;
   };
 
+  // source={require('../app/assets/mu/mu01.mp3')}
+  // /storage/emulated/0/Musics/ai_mang_co_don_di_k_icm_ft_apj_dimz_cover_ban_full_tiktok_6576209435847683983.mp3
+
   return (
     <View style={{flex: 1, backgroundColor: settings.colors.mainColor}}>
-      <View style={main.container}>
-        <StatusBar
-          backgroundColor={settings.colors.mainColor}
-          barStyle="dark-content"
+      {isPlay !== '' && playing !== '' && (
+        <Video
+          source={{
+            uri: playing?.path,
+          }}
+          onLoadStart={() => {
+            setDur(parseInt(0));
+            setCur(parseInt(0));
+          }}
+          audioOnly={true}
+          paused={isPause}
+          playInBackground={true}
+          onEnd={() => {
+            nextSong();
+          }}
+          onProgress={e => {
+            setDur(parseInt(e.seekableDuration));
+            setCur(parseInt(e.currentTime));
+          }}
+          style={{flex: 0, zIndex: -99}}
         />
+      )}
+      <View style={main.container}>
         <TouchableOpacity
           onPress={() => {
             nav.openDrawer();
@@ -328,7 +263,11 @@ export const HomeScreen = () => {
           style={main.menuButton}>
           <Ionicons name="menu" size={30} color={settings.colors.secondColor} />
         </TouchableOpacity>
-        <Text style={[main.textAppName, {fontFamily: 'SVN-Olivier'}]}>
+        <Text
+          onPress={() => {
+            nav.openDrawer();
+          }}
+          style={[main.textAppName, {fontFamily: 'SVN-Bariol'}]}>
           Master MuSic
         </Text>
         <View style={{flex: 1}} />
@@ -356,7 +295,7 @@ export const HomeScreen = () => {
       </View>
       {songs !== '' ? (
         <FlatList
-          data={curType === 0 ? songs : curType === 1 ? faMu : songs}
+          data={type === 'Tất cả' ? songs : type === 'Yêu thích' ? faMu : songs}
           renderItem={({item}) => (
             <RenderItem item={item} onClick={playMu} now={playing} />
           )}
@@ -395,11 +334,16 @@ export const HomeScreen = () => {
         style={main.controlContainer}>
         <View style={main.control}>
           <View style={main.controlImage}>
-            <Image
-              resizeMode="contain"
-              source={require('../app/assets/images/disk.png')}
-              style={{width: 40, height: 40}}
-            />
+            <Animated.View style={{transform: [{rotate: spin}]}}>
+              <Image
+                resizeMode="contain"
+                source={require('../app/assets/images/disk.png')}
+                style={{
+                  width: 40,
+                  height: 40,
+                }}
+              />
+            </Animated.View>
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
             <Text numberOfLines={1} style={{fontSize: 16}}>
@@ -548,11 +492,11 @@ export const HomeScreen = () => {
                 paddingHorizontal: 15,
               }}>
               <Text style={{color: settings.colors.secondColor}}>
-                {currentTime}
+                {parseInt(cur) === 0 ? '00:00' : toHHMMSS(cur)}
               </Text>
               <View style={{flex: 1}} />
               <Text style={{color: settings.colors.secondColor}}>
-                {duration}
+                {parseInt(dur) === 0 ? '00:00' : toHHMMSS(dur)}
               </Text>
             </View>
           </View>

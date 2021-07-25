@@ -1,6 +1,7 @@
 import {HomeScreen} from './app';
+import {AppSetting} from './settingApp';
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -24,6 +25,8 @@ import {
   AntDesign,
 } from './config';
 
+import {saveDarkmode} from './app/appSetting';
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -44,11 +47,23 @@ const Screens = ({style}) => {
 };
 
 const DrawerContent = props => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  const handleSetDark = () => {
+    setDarkMode(!darkMode);
+  };
+
+  useEffect(() => {
+    saveDarkmode(darkMode);
+  }, [darkMode]);
+
   return (
     <DrawerContentScrollView
       {...props}
       scrollEnabled={false}
-      contentContainerStyle={{flex: 1}}>
+      contentContainerStyle={{
+        flex: 1,
+      }}>
       <StatusBar
         backgroundColor={settings.colors.secondColor}
         barStyle="light-content"
@@ -105,6 +120,9 @@ const DrawerContent = props => {
       </View>
 
       <TouchableOpacity
+        onPress={() => {
+          props.navigation.navigate('set');
+        }}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -128,6 +146,9 @@ const DrawerContent = props => {
       </TouchableOpacity>
 
       <TouchableOpacity
+        onPress={() => {
+          props.navigation.navigate('set');
+        }}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -151,6 +172,9 @@ const DrawerContent = props => {
       </TouchableOpacity>
 
       <TouchableOpacity
+        onPress={() => {
+          handleSetDark();
+        }}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -169,7 +193,7 @@ const DrawerContent = props => {
             fontSize: 14,
             fontWeight: 'bold',
           }}>
-          Dark mode
+          Dark mode ({!darkMode ? 'tắt' : 'mở'})
         </Text>
       </TouchableOpacity>
 
@@ -216,19 +240,12 @@ const Draw = () => {
   const animatedStyle = {borderRadius, transform: [{scale}]};
 
   return (
-    <ImageBackground
-      style={{flex: 1, backgroundColor: settings.colors.secondColor}}>
+    <View style={{backgroundColor: settings.colors.secondColor, flex: 1}}>
       <Drawer.Navigator
         drawerType="slide"
         overlayColor="transparent"
         drawerStyle={styles.drawerStyles}
-        contentContainerStyle={{flex: 1}}
-        drawerContentOptions={{
-          activeBackgroundColor: 'transparent',
-          activeTintColor: 'white',
-          inactiveTintColor: 'white',
-        }}
-        sceneContainerStyle={{backgroundColor: 'transparent'}}
+        sceneContainerStyle={{backgroundColor: settings.colors.secondColor}}
         drawerContent={props => {
           setProgress(props.progress);
           return <DrawerContent {...props} />;
@@ -236,8 +253,11 @@ const Draw = () => {
         <Drawer.Screen name="Screens">
           {props => <Screens {...props} style={animatedStyle} />}
         </Drawer.Screen>
+        <Drawer.Screen name="set">
+          {props => <AppSetting {...props} style={animatedStyle} />}
+        </Drawer.Screen>
       </Drawer.Navigator>
-    </ImageBackground>
+    </View>
   );
 };
 
