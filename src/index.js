@@ -25,7 +25,8 @@ import {
   AntDesign,
 } from './config';
 
-import {saveDarkmode} from './app/appSetting';
+import {saveDarkmode, getDarkmode} from './app/appSetting';
+import {color} from './settingApp';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -50,12 +51,9 @@ const DrawerContent = props => {
   const [darkMode, setDarkMode] = useState(false);
 
   const handleSetDark = () => {
+    saveDarkmode(!darkMode);
     setDarkMode(!darkMode);
   };
-
-  useEffect(() => {
-    saveDarkmode(darkMode);
-  }, [darkMode]);
 
   return (
     <DrawerContentScrollView
@@ -65,8 +63,10 @@ const DrawerContent = props => {
         flex: 1,
       }}>
       <StatusBar
-        backgroundColor={settings.colors.secondColor}
-        barStyle="light-content"
+        backgroundColor={color.mainColor}
+        barStyle={
+          color.secondColor !== '#000' ? 'light-content' : 'dark-content'
+        }
       />
       <View
         style={{
@@ -82,20 +82,27 @@ const DrawerContent = props => {
             marginBottom: -81,
             borderRadius: 1000,
             borderWidth: 2,
-            borderColor: settings.colors.mainColor,
+            borderColor: color.mainColor,
           }}
         />
-        <Image
-          resizeMode="contain"
+        <View
           style={{
             width: 80,
             height: 80,
             borderRadius: 1000,
-          }}
-          source={{
-            uri: 'https://bom.to/fOsNLnTAyTL5zf',
-          }}
-        />
+          }}>
+          <Image
+            resizeMode="contain"
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 1000,
+            }}
+            source={{
+              uri: 'https://bom.to/fOsNLnTAyTL5zf',
+            }}
+          />
+        </View>
       </View>
 
       <View
@@ -103,7 +110,7 @@ const DrawerContent = props => {
         <Text
           style={{
             fontSize: 14,
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             fontWeight: 'bold',
           }}>
           Nguyễn Phúc Bảo Châu
@@ -112,7 +119,7 @@ const DrawerContent = props => {
         <Text
           style={{
             fontSize: 10,
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             marginTop: 3,
           }}>
           chau.02it@gmail.com
@@ -129,14 +136,10 @@ const DrawerContent = props => {
           paddingHorizontal: 10,
           marginTop: 30,
         }}>
-        <Ionicons
-          name="settings-sharp"
-          size={18}
-          color={settings.colors.mainColor}
-        />
+        <Ionicons name="settings-sharp" size={18} color={color.mainColor} />
         <Text
           style={{
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             marginLeft: 10,
             fontSize: 14,
             fontWeight: 'bold',
@@ -155,14 +158,10 @@ const DrawerContent = props => {
           paddingHorizontal: 10,
           marginTop: 30,
         }}>
-        <FontAwesome5
-          name="theater-masks"
-          size={14}
-          color={settings.colors.mainColor}
-        />
+        <FontAwesome5 name="theater-masks" size={14} color={color.mainColor} />
         <Text
           style={{
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             marginLeft: 10,
             fontSize: 14,
             fontWeight: 'bold',
@@ -184,11 +183,11 @@ const DrawerContent = props => {
         <MaterialCommunityIcons
           name="theme-light-dark"
           size={18}
-          color={settings.colors.mainColor}
+          color={color.mainColor}
         />
         <Text
           style={{
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             marginLeft: 10,
             fontSize: 14,
             fontWeight: 'bold',
@@ -205,14 +204,10 @@ const DrawerContent = props => {
           paddingHorizontal: 10,
           marginBottom: 80,
         }}>
-        <Ionicons
-          name="ios-log-out"
-          size={18}
-          color={settings.colors.mainColor}
-        />
+        <Ionicons name="ios-log-out" size={18} color={color.mainColor} />
         <Text
           style={{
-            color: settings.colors.mainColor,
+            color: color.mainColor,
             marginLeft: 10,
             fontSize: 14,
             fontWeight: 'bold',
@@ -224,8 +219,9 @@ const DrawerContent = props => {
   );
 };
 
-const Draw = () => {
-  const [progress, setProgress] = React.useState(new Animated.Value(0));
+const MainNav = () => {
+  const [progress, setProgress] = useState(new Animated.Value(0));
+  const [loading, setLoading] = useState(true);
 
   const scale = Animated.interpolateNode(progress, {
     inputRange: [0, 1],
@@ -237,26 +233,56 @@ const Draw = () => {
     outputRange: [0, 16],
   });
 
+  useEffect(() => {
+    getSettingApp();
+  }, []);
+
+  const getSettingApp = async () => {
+    console.log('getSetting');
+
+    const dark = await getDarkmode();
+    console.log('dark: ', dark);
+    if (dark) {
+      await darkMode();
+    } else {
+      await lightMode();
+    }
+
+    setLoading(false);
+  };
+
+  const darkMode = () => {
+    color.mainColor = '#000';
+    color.secondColor = '#fff';
+  };
+
+  const lightMode = () => {
+    color.mainColor = '#fff';
+    color.secondColor = '#000';
+  };
+
   const animatedStyle = {borderRadius, transform: [{scale}]};
 
   return (
-    <View style={{backgroundColor: settings.colors.secondColor, flex: 1}}>
-      <Drawer.Navigator
-        drawerType="slide"
-        overlayColor="transparent"
-        drawerStyle={styles.drawerStyles}
-        sceneContainerStyle={{backgroundColor: settings.colors.secondColor}}
-        drawerContent={props => {
-          setProgress(props.progress);
-          return <DrawerContent {...props} />;
-        }}>
-        <Drawer.Screen name="Screens">
-          {props => <Screens {...props} style={animatedStyle} />}
-        </Drawer.Screen>
-        <Drawer.Screen name="set">
-          {props => <AppSetting {...props} style={animatedStyle} />}
-        </Drawer.Screen>
-      </Drawer.Navigator>
+    <View style={{backgroundColor: color.secondColor, flex: 1}}>
+      {!loading && (
+        <Drawer.Navigator
+          drawerType="slide"
+          overlayColor="transparent"
+          drawerStyle={styles.drawerStyles}
+          sceneContainerStyle={{backgroundColor: color.secondColor}}
+          drawerContent={props => {
+            setProgress(props.progress);
+            return <DrawerContent {...props} />;
+          }}>
+          <Drawer.Screen name="Screens">
+            {props => <Screens {...props} style={animatedStyle} />}
+          </Drawer.Screen>
+          <Drawer.Screen name="set">
+            {props => <AppSetting {...props} style={animatedStyle} />}
+          </Drawer.Screen>
+        </Drawer.Navigator>
+      )}
     </View>
   );
 };
@@ -284,4 +310,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {Draw};
+export {MainNav};

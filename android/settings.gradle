@@ -3,8 +3,6 @@ include ':react-native-splash-screen'
 project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
 include ':react-native-video'
 project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android')
-include ':react-native-background-timer'
-project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
 include ':react-native-get-music-files-v3dev-test'
 project(':react-native-get-music-files-v3dev-test').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-get-music-files-v3dev-test/android')
 include ':react-native-permissions'

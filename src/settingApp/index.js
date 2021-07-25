@@ -12,6 +12,11 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const colors = settings.colors;
 
+export const color = {
+  mainColor: '#fff',
+  secondColor: '#000',
+};
+
 export const AppSetting = () => {
   const nav = useNavigation();
 

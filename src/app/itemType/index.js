@@ -8,10 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import {settings} from '../../config';
-import MusicFiles, {
-  Constants,
-  CoverImage,
-} from 'react-native-get-music-files-v3dev-test';
+import {color} from '../../settingApp';
 
 const RenderItemType = ({item, onClick, now}) => {
   const click = () => {
@@ -32,15 +29,13 @@ const RenderItemType = ({item, onClick, now}) => {
         height: 40,
         alignItems: 'center',
         justifyContent: 'center',
-        borderBottomWidth: 3,
-        borderColor: isPlaying()
-          ? settings.colors.secondColor
-          : settings.colors.mainColor,
+        borderBottomWidth: isPlaying() ? 3 : 0,
+        borderColor: isPlaying() ? color.secondColor : color.mainColor,
       }}>
       <Text
         style={{
           fontSize: isPlaying() ? 16 : 14,
-          color: isPlaying() ? settings.colors.secondColor : 'grey',
+          color: isPlaying() ? color.secondColor : 'grey',
           fontWeight: isPlaying() ? 'bold' : '100',
         }}>
         {item.title}

@@ -13,10 +13,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from '../../config';
-import MusicFiles, {
-  Constants,
-  CoverImage,
-} from 'react-native-get-music-files-v3dev-test';
+import {color} from '../../settingApp';
 
 const RenderItem = ({item, onClick, now}) => {
   const click = () => {
@@ -35,11 +32,11 @@ const RenderItem = ({item, onClick, now}) => {
       }}
       activeOpacity={0.85}
       style={{
-        backgroundColor: '#fff',
+        backgroundColor: color.mainColor,
         width: '100%',
         height: 60,
-        borderWidth: 0.2,
-        borderColor: '#ECEFF1',
+        borderBottomWidth: 0.2,
+        borderColor: color.secondColor === '#000' ? '#ECEFF1' : '#424242',
       }}>
       <View
         style={{
@@ -54,17 +51,29 @@ const RenderItem = ({item, onClick, now}) => {
             height: 50,
             borderRadius: 500,
           }}>
-          <Image
-            resizeMode="contain"
-            source={require('../../app/assets/images/disk.png')}
-            style={{width: 50, height: 50}}
-          />
+          {color.secondColor === '#000' ? (
+            <Image
+              resizeMode="contain"
+              source={require('../../app/assets/images/disk.png')}
+              style={{width: 50, height: 50}}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              source={require('../../app/assets/images/disk-2.png')}
+              style={{width: 50, height: 50}}
+            />
+          )}
         </View>
         <View style={{flex: 1, marginLeft: 10}}>
-          <Text numberOfLines={1} style={{fontSize: 16}}>
+          <Text
+            numberOfLines={1}
+            style={{fontSize: 16, color: color.secondColor}}>
             {item?.title}
           </Text>
-          <Text numberOfLines={1} style={{fontSize: 12}}>
+          <Text
+            numberOfLines={1}
+            style={{fontSize: 12, color: color.secondColor}}>
             {item?.artist}
           </Text>
         </View>
@@ -79,7 +88,7 @@ const RenderItem = ({item, onClick, now}) => {
             <MaterialCommunityIcons
               name="music-note-eighth"
               size={22}
-              color={settings.colors.secondColor}
+              color={color.secondColor}
             />
           )}
         </View>

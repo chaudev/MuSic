@@ -6,7 +6,6 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.brentvatne.react.ReactVideoPackage;
-import com.ocetnik.timer.BackgroundTimerPackage;
 import com.GetMusicFiles.GetMusicFiles;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.cinder92.musicfiles.RNReactNativeGetMusicFilesPackage;
@@ -36,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
 //           packages.add(new RNReactNativeGetMusicFilesPackage());
             new ReanimatedJSIModulePackage();
+            new SplashScreenReactPackage();
 
           return packages;
         }

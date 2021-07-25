@@ -8,6 +8,7 @@ import {
   Modal,
   Animated,
   Easing,
+  BackHandler,
   StatusBar,
 } from 'react-native';
 import {main, modal} from './css';
@@ -32,12 +33,16 @@ import {
 } from '../config';
 import {toHHMMSS} from './function';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
+import {color} from '../settingApp';
 
 import Video from 'react-native-video';
 
 let spinValue = new Animated.Value(0);
 
 export const HomeScreen = () => {
+  SplashScreen.hide();
+
   const nav = useNavigation();
   const sortBy = Constants.SortBy.Title;
   const sortOrder = Constants.SortOrder.Ascending;
@@ -106,19 +111,14 @@ export const HomeScreen = () => {
   };
 
   const playMu = data => {
+    setShowModal(true);
     setPlaying(data);
     setIsPause(false);
     setIsPlay(true);
     saveCurrentSong(data);
   };
 
-  const initInterval = () => {
-    setCur(0);
-    setDur(0);
-  };
-
   const nextSong = () => {
-    initInterval();
     if (type === 'Tất cả') {
       const currentSong = songIDs.indexOf(playing?.id);
       if (currentSong < songs.length) {
@@ -141,7 +141,6 @@ export const HomeScreen = () => {
   };
 
   const reSong = () => {
-    initInterval();
     const currentSong = songIDs.indexOf(playing?.id);
     playMu(songs[currentSong - 1]);
   };
@@ -228,19 +227,28 @@ export const HomeScreen = () => {
     return false;
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      if (showModal) {
+        setShowModal(false);
+      }
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction(),
+    );
+    return () => backHandler.remove();
+  }, [BackHandler]);
+
   // source={require('../app/assets/mu/mu01.mp3')}
   // /storage/emulated/0/Musics/ai_mang_co_don_di_k_icm_ft_apj_dimz_cover_ban_full_tiktok_6576209435847683983.mp3
 
   return (
-    <View style={{flex: 1, backgroundColor: settings.colors.mainColor}}>
-      {isPlay !== '' && playing !== '' && (
+    <View style={{flex: 1, backgroundColor: color.mainColor}}>
+      {isPlay !== false && playing !== '' && (
         <Video
           source={{
             uri: playing?.path,
-          }}
-          onLoadStart={() => {
-            setDur(parseInt(0));
-            setCur(parseInt(0));
           }}
           audioOnly={true}
           paused={isPause}
@@ -261,7 +269,7 @@ export const HomeScreen = () => {
             nav.openDrawer();
           }}
           style={main.menuButton}>
-          <Ionicons name="menu" size={30} color={settings.colors.secondColor} />
+          <Ionicons name="menu" size={30} color={color.secondColor} />
         </TouchableOpacity>
         <Text
           onPress={() => {
@@ -272,11 +280,7 @@ export const HomeScreen = () => {
         </Text>
         <View style={{flex: 1}} />
         <TouchableOpacity style={main.searchButton}>
-          <Ionicons
-            name="search"
-            size={26}
-            color={settings.colors.secondColor}
-          />
+          <Ionicons name="search" size={26} color={color.secondColor} />
         </TouchableOpacity>
       </View>
 
@@ -311,9 +315,9 @@ export const HomeScreen = () => {
       <Slider
         minimumValue={0}
         maximumValue={dur}
-        minimumTrackTintColor={settings.colors.secondColor}
-        thumbTintColor={settings.colors.secondColor}
-        maximumTrackTintColor={settings.colors.secondColor}
+        minimumTrackTintColor={color.secondColor}
+        thumbTintColor={color.secondColor}
+        maximumTrackTintColor={color.secondColor}
         thumbImage={require('../app/assets/images/none.png')}
         value={cur}
         style={{
@@ -335,21 +339,36 @@ export const HomeScreen = () => {
         <View style={main.control}>
           <View style={main.controlImage}>
             <Animated.View style={{transform: [{rotate: spin}]}}>
-              <Image
-                resizeMode="contain"
-                source={require('../app/assets/images/disk.png')}
-                style={{
-                  width: 40,
-                  height: 40,
-                }}
-              />
+              {color.secondColor === '#000' ? (
+                <Image
+                  resizeMode="contain"
+                  source={require('../app/assets/images/disk.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+              ) : (
+                <Image
+                  resizeMode="contain"
+                  source={require('../app/assets/images/disk-2.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+              )}
             </Animated.View>
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
-            <Text numberOfLines={1} style={{fontSize: 16}}>
+            <Text
+              numberOfLines={1}
+              style={{fontSize: 16, color: color.secondColor}}>
               {playing?.title}
             </Text>
-            <Text numberOfLines={1} style={{fontSize: 12}}>
+            <Text
+              numberOfLines={1}
+              style={{fontSize: 12, color: color.secondColor}}>
               {playing?.artist}
             </Text>
           </View>
@@ -366,11 +385,7 @@ export const HomeScreen = () => {
               {!checkFavourite() ? (
                 <AntDesign name="heart" size={18} color={'#CFD8DC'} />
               ) : (
-                <AntDesign
-                  name="heart"
-                  size={18}
-                  color={settings.colors.secondColor}
-                />
+                <AntDesign name="heart" size={18} color={color.secondColor} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -379,16 +394,12 @@ export const HomeScreen = () => {
               }}
               style={main.controlPlay}>
               {isPause ? (
-                <FontAwesome5
-                  name="play"
-                  size={16}
-                  color={settings.colors.secondColor}
-                />
+                <FontAwesome5 name="play" size={16} color={color.secondColor} />
               ) : (
                 <FontAwesome5
                   name="pause"
                   size={16}
-                  color={settings.colors.secondColor}
+                  color={color.secondColor}
                 />
               )}
             </TouchableOpacity>
@@ -400,7 +411,7 @@ export const HomeScreen = () => {
               <Ionicons
                 name="play-skip-forward"
                 size={22}
-                color={settings.colors.secondColor}
+                color={color.secondColor}
               />
             </TouchableOpacity>
           </View>
@@ -408,7 +419,7 @@ export const HomeScreen = () => {
       </TouchableOpacity>
 
       <Modal visible={showModal} animationType="slide">
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: color.mainColor}}>
           <View style={modal.header}>
             <TouchableOpacity
               onPress={() => {
@@ -418,7 +429,7 @@ export const HomeScreen = () => {
               <Ionicons
                 name="ios-chevron-back-outline"
                 size={24}
-                color={settings.colors.secondColor}
+                color={color.secondColor}
               />
             </TouchableOpacity>
             <Text style={modal.title}>ĐANG PHÁT</Text>
@@ -430,26 +441,34 @@ export const HomeScreen = () => {
               {!checkFavourite() ? (
                 <AntDesign name="heart" size={18} color={'#CFD8DC'} />
               ) : (
-                <AntDesign
-                  name="heart"
-                  size={18}
-                  color={settings.colors.secondColor}
-                />
+                <AntDesign name="heart" size={18} color={color.secondColor} />
               )}
             </TouchableOpacity>
           </View>
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             <Animated.View style={{transform: [{rotate: spin}]}}>
-              <Image
-                resizeMode="contain"
-                source={require('../app/assets/images/disk.png')}
-                style={{
-                  width: '100%',
-                  height: undefined,
-                  aspectRatio: 1.2,
-                }}
-              />
+              {color.secondColor === '#000' ? (
+                <Image
+                  resizeMode="contain"
+                  source={require('../app/assets/images/disk.png')}
+                  style={{
+                    width: '100%',
+                    height: undefined,
+                    aspectRatio: 1.2,
+                  }}
+                />
+              ) : (
+                <Image
+                  resizeMode="contain"
+                  source={require('../app/assets/images/disk-2.png')}
+                  style={{
+                    width: '100%',
+                    height: undefined,
+                    aspectRatio: 1.2,
+                  }}
+                />
+              )}
             </Animated.View>
           </View>
 
@@ -459,7 +478,7 @@ export const HomeScreen = () => {
               numberOfLines={1}
               style={{
                 fontSize: 16,
-                color: settings.colors.secondColor,
+                color: color.secondColor,
                 textAlign: 'center',
                 fontWeight: 'bold',
               }}>
@@ -469,7 +488,7 @@ export const HomeScreen = () => {
               numberOfLines={1}
               style={{
                 fontSize: 12,
-                color: settings.colors.secondColor,
+                color: color.secondColor,
                 textAlign: 'center',
               }}>
               {playing?.artist}
@@ -480,9 +499,9 @@ export const HomeScreen = () => {
             <Slider
               minimumValue={0}
               maximumValue={dur}
-              minimumTrackTintColor={settings.colors.secondColor}
-              thumbTintColor={settings.colors.secondColor}
-              maximumTrackTintColor="#000000"
+              minimumTrackTintColor={color.secondColor}
+              thumbTintColor={color.secondColor}
+              maximumTrackTintColor={color.secondColor}
               value={cur}
             />
             <View
@@ -491,11 +510,11 @@ export const HomeScreen = () => {
                 alignItems: 'center',
                 paddingHorizontal: 15,
               }}>
-              <Text style={{color: settings.colors.secondColor}}>
+              <Text style={{color: color.secondColor}}>
                 {parseInt(cur) === 0 ? '00:00' : toHHMMSS(cur)}
               </Text>
               <View style={{flex: 1}} />
-              <Text style={{color: settings.colors.secondColor}}>
+              <Text style={{color: color.secondColor}}>
                 {parseInt(dur) === 0 ? '00:00' : toHHMMSS(dur)}
               </Text>
             </View>
@@ -523,9 +542,9 @@ export const HomeScreen = () => {
                   borderRadius: 500,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: settings.colors.secondColor,
+                  backgroundColor: color.secondColor,
 
-                  shadowColor: settings.colors.secondColor,
+                  shadowColor: color.secondColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -538,7 +557,7 @@ export const HomeScreen = () => {
                 <Ionicons
                   name="play-skip-back"
                   size={18}
-                  color={settings.colors.mainColor}
+                  color={color.mainColor}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -552,9 +571,9 @@ export const HomeScreen = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginHorizontal: 40,
-                  backgroundColor: settings.colors.secondColor,
+                  backgroundColor: color.secondColor,
 
-                  shadowColor: settings.colors.secondColor,
+                  shadowColor: color.secondColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -568,14 +587,14 @@ export const HomeScreen = () => {
                   <FontAwesome5
                     name="play"
                     size={18}
-                    color={settings.colors.mainColor}
+                    color={color.mainColor}
                     style={{marginLeft: 3}}
                   />
                 ) : (
                   <FontAwesome5
                     name="pause"
                     size={18}
-                    color={settings.colors.mainColor}
+                    color={color.mainColor}
                   />
                 )}
               </TouchableOpacity>
@@ -589,9 +608,9 @@ export const HomeScreen = () => {
                   borderRadius: 500,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: settings.colors.secondColor,
+                  backgroundColor: color.secondColor,
 
-                  shadowColor: settings.colors.secondColor,
+                  shadowColor: color.secondColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -604,7 +623,7 @@ export const HomeScreen = () => {
                 <Ionicons
                   name="play-skip-forward"
                   size={18}
-                  color={settings.colors.mainColor}
+                  color={color.mainColor}
                 />
               </TouchableOpacity>
             </View>

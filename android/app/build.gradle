@@ -81,7 +81,6 @@ dependencies {
     implementation project(':react-native-get-music-files')
     implementation project(':react-native-permissions')
     implementation project(':react-native-get-music-files-v3dev-test')
-    implementation project(':react-native-background-timer')
     implementation project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
     implementation project(':react-native-splash-screen')
