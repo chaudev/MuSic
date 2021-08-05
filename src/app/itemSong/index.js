@@ -1,23 +1,17 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  Image,
-  Modal,
-  Animated,
-} from 'react-native';
-import {
-  settings,
-  FontAwesome5,
-  Ionicons,
-  MaterialCommunityIcons,
-} from '../../config';
+import {TouchableOpacity, View, Text, Image} from 'react-native';
+import {MaterialCommunityIcons} from '../../config';
 import {color} from '../../settingApp';
 
+// redux
+import {useSelector} from 'react-redux';
+
 const RenderItem = ({item, onClick, now}) => {
+  const mainColor = useSelector(state => state.theme.mainColor);
+  const secColor = useSelector(state => state.theme.secColor);
+  const isDark = useSelector(state => state.theme.isDarkMode);
+
   const click = () => {
-    console.log(item);
     onClick(item);
   };
 
@@ -32,11 +26,11 @@ const RenderItem = ({item, onClick, now}) => {
       }}
       activeOpacity={0.85}
       style={{
-        backgroundColor: color.mainColor,
+        backgroundColor: mainColor,
         width: '100%',
         height: 60,
         borderBottomWidth: 0.2,
-        borderColor: color.secondColor === '#000' ? '#ECEFF1' : '#424242',
+        borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
       }}>
       <View
         style={{
@@ -66,14 +60,10 @@ const RenderItem = ({item, onClick, now}) => {
           )}
         </View>
         <View style={{flex: 1, marginLeft: 10}}>
-          <Text
-            numberOfLines={1}
-            style={{fontSize: 16, color: color.secondColor}}>
+          <Text numberOfLines={1} style={{fontSize: 16, color: secColor}}>
             {item?.title}
           </Text>
-          <Text
-            numberOfLines={1}
-            style={{fontSize: 12, color: color.secondColor}}>
+          <Text numberOfLines={1} style={{fontSize: 12, color: secColor}}>
             {item?.artist}
           </Text>
         </View>
@@ -88,7 +78,7 @@ const RenderItem = ({item, onClick, now}) => {
             <MaterialCommunityIcons
               name="music-note-eighth"
               size={22}
-              color={color.secondColor}
+              color={secColor}
             />
           )}
         </View>

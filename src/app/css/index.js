@@ -5,9 +5,7 @@ import {color} from '../../settingApp';
 const main = StyleSheet.create({
   container: {
     height: 50,
-    backgroundColor: color.mainColor,
     borderBottomWidth: 0.5,
-    borderColor: color.secondColor === '#000' ? '#ECEFF1' : '#424242',
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -22,7 +20,6 @@ const main = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'SVN-Olivier',
-    color: color.secondColor,
   },
   searchButton: {
     width: 40,
@@ -32,18 +29,14 @@ const main = StyleSheet.create({
   },
   tabMenu: {
     height: 40,
-    backgroundColor: color.mainColor,
     borderBottomWidth: 0.5,
-    borderColor: color.secondColor === '#000' ? '#ECEFF1' : '#424242',
     flexDirection: 'row',
     alignItems: 'center',
   },
   controlContainer: {
-    backgroundColor: color.mainColor,
     width: '100%',
     height: 50,
     borderTopWidth: 0.5,
-    borderColor: color.secondColor === '#000' ? '#ECEFF1' : '#424242',
   },
   control: {
     flex: 1,
@@ -95,7 +88,6 @@ const modal = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: 'bold',
-    color: color.secondColor,
   },
   rightButton: {
     width: 50,

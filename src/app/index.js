@@ -34,14 +34,30 @@ import {
 import {toHHMMSS} from './function';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
-import {color} from '../settingApp';
-
 import Video from 'react-native-video';
+
+// redux
+import {useSelector} from 'react-redux';
 
 let spinValue = new Animated.Value(0);
 
 export const HomeScreen = () => {
   SplashScreen.hide();
+
+  const mainColor = useSelector(state => state.theme.mainColor);
+  const secColor = useSelector(state => state.theme.secColor);
+  const isDark = useSelector(state => state.theme.isDarkMode);
+
+  console.log(
+    ' Home -------- mainColor: ',
+    mainColor,
+    ' - ',
+    'secColor: ',
+    secColor,
+    ' - ',
+    'darkMode: ',
+    isDark,
+  );
 
   const nav = useNavigation();
   const sortBy = Constants.SortBy.Title;
@@ -244,7 +260,7 @@ export const HomeScreen = () => {
   // /storage/emulated/0/Musics/ai_mang_co_don_di_k_icm_ft_apj_dimz_cover_ban_full_tiktok_6576209435847683983.mp3
 
   return (
-    <View style={{flex: 1, backgroundColor: color.mainColor}}>
+    <View style={{flex: 1, backgroundColor: mainColor, paddingTop: 25}}>
       {isPlay !== false && playing !== '' && (
         <Video
           source={{
@@ -263,28 +279,45 @@ export const HomeScreen = () => {
           style={{flex: 0, zIndex: -99}}
         />
       )}
-      <View style={main.container}>
+      <View
+        style={[
+          main.container,
+          {
+            backgroundColor: mainColor,
+            borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+          },
+        ]}>
         <TouchableOpacity
           onPress={() => {
             nav.openDrawer();
           }}
-          style={main.menuButton}>
-          <Ionicons name="menu" size={30} color={color.secondColor} />
+          style={[main.menuButton]}>
+          <Ionicons name="menu" size={30} color={secColor} />
         </TouchableOpacity>
         <Text
           onPress={() => {
             nav.openDrawer();
           }}
-          style={[main.textAppName, {fontFamily: 'SVN-Bariol'}]}>
+          style={[
+            main.textAppName,
+            {fontFamily: 'SVN-Bariol', color: secColor},
+          ]}>
           Master MuSic
         </Text>
         <View style={{flex: 1}} />
         <TouchableOpacity style={main.searchButton}>
-          <Ionicons name="search" size={26} color={color.secondColor} />
+          <Ionicons name="search" size={26} color={secColor} />
         </TouchableOpacity>
       </View>
 
-      <View style={main.tabMenu}>
+      <View
+        style={[
+          main.tabMenu,
+          {
+            backgroundColor: mainColor,
+            borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+          },
+        ]}>
         <FlatList
           data={[{title: 'Tất cả'}, {title: 'Yêu thích'}]}
           horizontal
@@ -315,9 +348,9 @@ export const HomeScreen = () => {
       <Slider
         minimumValue={0}
         maximumValue={dur}
-        minimumTrackTintColor={color.secondColor}
-        thumbTintColor={color.secondColor}
-        maximumTrackTintColor={color.secondColor}
+        minimumTrackTintColor={secColor}
+        thumbTintColor={secColor}
+        maximumTrackTintColor={secColor}
         thumbImage={require('../app/assets/images/none.png')}
         value={cur}
         style={{
@@ -335,11 +368,17 @@ export const HomeScreen = () => {
           setShowModal(true);
         }}
         activeOpacity={0.85}
-        style={main.controlContainer}>
+        style={[
+          main.controlContainer,
+          {
+            backgroundColor: mainColor,
+            borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+          },
+        ]}>
         <View style={main.control}>
           <View style={main.controlImage}>
             <Animated.View style={{transform: [{rotate: spin}]}}>
-              {color.secondColor === '#000' ? (
+              {secColor === '#000' ? (
                 <Image
                   resizeMode="contain"
                   source={require('../app/assets/images/disk.png')}
@@ -361,14 +400,10 @@ export const HomeScreen = () => {
             </Animated.View>
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
-            <Text
-              numberOfLines={1}
-              style={{fontSize: 16, color: color.secondColor}}>
+            <Text numberOfLines={1} style={{fontSize: 16, color: secColor}}>
               {playing?.title}
             </Text>
-            <Text
-              numberOfLines={1}
-              style={{fontSize: 12, color: color.secondColor}}>
+            <Text numberOfLines={1} style={{fontSize: 12, color: secColor}}>
               {playing?.artist}
             </Text>
           </View>
@@ -385,7 +420,7 @@ export const HomeScreen = () => {
               {!checkFavourite() ? (
                 <AntDesign name="heart" size={18} color={'#CFD8DC'} />
               ) : (
-                <AntDesign name="heart" size={18} color={color.secondColor} />
+                <AntDesign name="heart" size={18} color={secColor} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -394,13 +429,9 @@ export const HomeScreen = () => {
               }}
               style={main.controlPlay}>
               {isPause ? (
-                <FontAwesome5 name="play" size={16} color={color.secondColor} />
+                <FontAwesome5 name="play" size={16} color={secColor} />
               ) : (
-                <FontAwesome5
-                  name="pause"
-                  size={16}
-                  color={color.secondColor}
-                />
+                <FontAwesome5 name="pause" size={16} color={secColor} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -408,18 +439,14 @@ export const HomeScreen = () => {
                 nextSong();
               }}
               style={main.controlNext}>
-              <Ionicons
-                name="play-skip-forward"
-                size={22}
-                color={color.secondColor}
-              />
+              <Ionicons name="play-skip-forward" size={22} color={secColor} />
             </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
 
       <Modal visible={showModal} animationType="slide">
-        <View style={{flex: 1, backgroundColor: color.mainColor}}>
+        <View style={{flex: 1, backgroundColor: mainColor}}>
           <View style={modal.header}>
             <TouchableOpacity
               onPress={() => {
@@ -429,10 +456,18 @@ export const HomeScreen = () => {
               <Ionicons
                 name="ios-chevron-back-outline"
                 size={24}
-                color={color.secondColor}
+                color={secColor}
               />
             </TouchableOpacity>
-            <Text style={modal.title}>ĐANG PHÁT</Text>
+            <Text
+              style={[
+                modal.title,
+                {
+                  color: secColor,
+                },
+              ]}>
+              ĐANG PHÁT
+            </Text>
             <TouchableOpacity
               onPress={() => {
                 favoirite();
@@ -441,14 +476,14 @@ export const HomeScreen = () => {
               {!checkFavourite() ? (
                 <AntDesign name="heart" size={18} color={'#CFD8DC'} />
               ) : (
-                <AntDesign name="heart" size={18} color={color.secondColor} />
+                <AntDesign name="heart" size={18} color={secColor} />
               )}
             </TouchableOpacity>
           </View>
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             <Animated.View style={{transform: [{rotate: spin}]}}>
-              {color.secondColor === '#000' ? (
+              {secColor === '#000' ? (
                 <Image
                   resizeMode="contain"
                   source={require('../app/assets/images/disk.png')}
@@ -478,7 +513,7 @@ export const HomeScreen = () => {
               numberOfLines={1}
               style={{
                 fontSize: 16,
-                color: color.secondColor,
+                color: secColor,
                 textAlign: 'center',
                 fontWeight: 'bold',
               }}>
@@ -488,7 +523,7 @@ export const HomeScreen = () => {
               numberOfLines={1}
               style={{
                 fontSize: 12,
-                color: color.secondColor,
+                color: secColor,
                 textAlign: 'center',
               }}>
               {playing?.artist}
@@ -499,9 +534,9 @@ export const HomeScreen = () => {
             <Slider
               minimumValue={0}
               maximumValue={dur}
-              minimumTrackTintColor={color.secondColor}
-              thumbTintColor={color.secondColor}
-              maximumTrackTintColor={color.secondColor}
+              minimumTrackTintColor={secColor}
+              thumbTintColor={secColor}
+              maximumTrackTintColor={secColor}
               value={cur}
             />
             <View
@@ -510,11 +545,11 @@ export const HomeScreen = () => {
                 alignItems: 'center',
                 paddingHorizontal: 15,
               }}>
-              <Text style={{color: color.secondColor}}>
+              <Text style={{color: secColor}}>
                 {parseInt(cur) === 0 ? '00:00' : toHHMMSS(cur)}
               </Text>
               <View style={{flex: 1}} />
-              <Text style={{color: color.secondColor}}>
+              <Text style={{color: secColor}}>
                 {parseInt(dur) === 0 ? '00:00' : toHHMMSS(dur)}
               </Text>
             </View>
@@ -542,9 +577,9 @@ export const HomeScreen = () => {
                   borderRadius: 500,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: color.secondColor,
+                  backgroundColor: secColor,
 
-                  shadowColor: color.secondColor,
+                  shadowColor: secColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -554,11 +589,7 @@ export const HomeScreen = () => {
 
                   elevation: 5,
                 }}>
-                <Ionicons
-                  name="play-skip-back"
-                  size={18}
-                  color={color.mainColor}
-                />
+                <Ionicons name="play-skip-back" size={18} color={mainColor} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -571,9 +602,9 @@ export const HomeScreen = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginHorizontal: 40,
-                  backgroundColor: color.secondColor,
+                  backgroundColor: secColor,
 
-                  shadowColor: color.secondColor,
+                  shadowColor: secColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -587,15 +618,11 @@ export const HomeScreen = () => {
                   <FontAwesome5
                     name="play"
                     size={18}
-                    color={color.mainColor}
+                    color={mainColor}
                     style={{marginLeft: 3}}
                   />
                 ) : (
-                  <FontAwesome5
-                    name="pause"
-                    size={18}
-                    color={color.mainColor}
-                  />
+                  <FontAwesome5 name="pause" size={18} color={mainColor} />
                 )}
               </TouchableOpacity>
               <TouchableOpacity
@@ -608,9 +635,9 @@ export const HomeScreen = () => {
                   borderRadius: 500,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: color.secondColor,
+                  backgroundColor: secColor,
 
-                  shadowColor: color.secondColor,
+                  shadowColor: secColor,
                   shadowOffset: {
                     width: 0,
                     height: 2,
@@ -623,7 +650,7 @@ export const HomeScreen = () => {
                 <Ionicons
                   name="play-skip-forward"
                   size={18}
-                  color={color.mainColor}
+                  color={mainColor}
                 />
               </TouchableOpacity>
             </View>

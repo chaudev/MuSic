@@ -10,7 +10,13 @@ import {
 import {settings} from '../../config';
 import {color} from '../../settingApp';
 
+// redux
+import {useSelector} from 'react-redux';
+
 const RenderItemType = ({item, onClick, now}) => {
+  const mainColor = useSelector(state => state.theme.mainColor);
+  const secColor = useSelector(state => state.theme.secColor);
+
   const click = () => {
     onClick(item);
   };
@@ -30,12 +36,12 @@ const RenderItemType = ({item, onClick, now}) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderBottomWidth: isPlaying() ? 3 : 0,
-        borderColor: isPlaying() ? color.secondColor : color.mainColor,
+        borderColor: isPlaying() ? secColor : mainColor,
       }}>
       <Text
         style={{
           fontSize: isPlaying() ? 16 : 14,
-          color: isPlaying() ? color.secondColor : 'grey',
+          color: isPlaying() ? secColor : 'grey',
           fontWeight: isPlaying() ? 'bold' : '100',
         }}>
         {item.title}
