@@ -35,6 +35,8 @@ import {toHHMMSS} from './function';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import Video from 'react-native-video';
+import LinearGradient from 'react-native-linear-gradient';
+import {Colors} from 'green-native';
 
 // redux
 import {useSelector} from 'react-redux';
@@ -44,13 +46,14 @@ let spinValue = new Animated.Value(0);
 export const HomeScreen = () => {
   SplashScreen.hide();
 
-  const mainColor = useSelector(state => state.theme.mainColor);
+  const mainColorStart = useSelector(state => state.theme.mainColorStart);
+  const mainColorEnd = useSelector(state => state.theme.mainColorEnd);
   const secColor = useSelector(state => state.theme.secColor);
   const isDark = useSelector(state => state.theme.isDarkMode);
 
   console.log(
     ' Home -------- mainColor: ',
-    mainColor,
+    mainColorEnd,
     ' - ',
     'secColor: ',
     secColor,
@@ -256,11 +259,10 @@ export const HomeScreen = () => {
     return () => backHandler.remove();
   }, [BackHandler]);
 
-  // source={require('../app/assets/mu/mu01.mp3')}
-  // /storage/emulated/0/Musics/ai_mang_co_don_di_k_icm_ft_apj_dimz_cover_ban_full_tiktok_6576209435847683983.mp3
-
   return (
-    <View style={{flex: 1, backgroundColor: mainColor, paddingTop: 25}}>
+    <LinearGradient
+      colors={[mainColorStart, mainColorEnd]}
+      style={{flex: 1, backgroundColor: mainColorEnd, paddingTop: 25}}>
       {isPlay !== false && playing !== '' && (
         <Video
           source={{
@@ -283,8 +285,7 @@ export const HomeScreen = () => {
         style={[
           main.container,
           {
-            backgroundColor: mainColor,
-            borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+            borderColor: Colors.trans10,
           },
         ]}>
         <TouchableOpacity
@@ -314,8 +315,7 @@ export const HomeScreen = () => {
         style={[
           main.tabMenu,
           {
-            backgroundColor: mainColor,
-            borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+            borderColor: Colors.trans10,
           },
         ]}>
         <FlatList
@@ -371,7 +371,6 @@ export const HomeScreen = () => {
         style={[
           main.controlContainer,
           {
-            backgroundColor: mainColor,
             borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
           },
         ]}>
@@ -446,7 +445,9 @@ export const HomeScreen = () => {
       </TouchableOpacity>
 
       <Modal visible={showModal} animationType="slide">
-        <View style={{flex: 1, backgroundColor: mainColor}}>
+        <LinearGradient
+          colors={[mainColorStart, mainColorEnd]}
+          style={{flex: 1, backgroundColor: mainColorEnd}}>
           <View style={modal.header}>
             <TouchableOpacity
               onPress={() => {
@@ -589,7 +590,11 @@ export const HomeScreen = () => {
 
                   elevation: 5,
                 }}>
-                <Ionicons name="play-skip-back" size={18} color={mainColor} />
+                <Ionicons
+                  name="play-skip-back"
+                  size={18}
+                  color={mainColorEnd}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -618,11 +623,11 @@ export const HomeScreen = () => {
                   <FontAwesome5
                     name="play"
                     size={18}
-                    color={mainColor}
+                    color={mainColorEnd}
                     style={{marginLeft: 3}}
                   />
                 ) : (
-                  <FontAwesome5 name="pause" size={18} color={mainColor} />
+                  <FontAwesome5 name="pause" size={18} color={mainColorEnd} />
                 )}
               </TouchableOpacity>
               <TouchableOpacity
@@ -650,13 +655,13 @@ export const HomeScreen = () => {
                 <Ionicons
                   name="play-skip-forward"
                   size={18}
-                  color={mainColor}
+                  color={mainColorEnd}
                 />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </LinearGradient>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };

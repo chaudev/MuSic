@@ -4,16 +4,18 @@ import {StyleSheet, View} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Animated from 'react-native-reanimated';
 import {getDarkmode} from './app/appSetting';
+import {AppTheme} from './changeTheme';
 import {color} from './settingApp';
 import {Screens} from '~/navigation/home';
 import {DrawerContent} from '~/navigation/drawer';
 
 // redux
 import {useDispatch, useSelector} from 'react-redux';
-import theme, {
-  setDarkMode,
-  setMainColor,
+import {
   setSecColor,
+  setMainColorEnd,
+  setMainColorStart,
+  getTheme,
 } from '~/store/reducers/theme';
 
 const Drawer = createDrawerNavigator();
@@ -41,39 +43,36 @@ const MainNav = () => {
   }, []);
 
   const getSettingApp = async () => {
-    const dark = await getDarkmode();
-    console.log('dark: ', dark);
-    if (dark) {
-      await darkMode();
-    } else {
-      await lightMode();
-    }
+    const theme = await getTheme();
+    console.log('theme: ', theme);
+
+    await darkMode(theme);
 
     setLoading(false);
   };
 
-  const darkMode = () => {
-    dispatch(setDarkMode(true));
-    dispatch(setMainColor('#000'));
-    dispatch(setSecColor('#fff'));
-  };
-
-  const lightMode = () => {
-    dispatch(setDarkMode(false));
-    dispatch(setMainColor('#fff'));
-    dispatch(setSecColor('#000'));
+  const darkMode = theme => {
+    if (theme !== null) {
+      dispatch(setMainColorStart(theme?.mainColorStart));
+      dispatch(setMainColorEnd(theme?.mainColorEnd));
+      dispatch(setSecColor(theme?.secColor));
+    } else {
+      dispatch(setMainColorStart('#fff'));
+      dispatch(setMainColorEnd('#fff'));
+      dispatch(setSecColor('#000'));
+    }
   };
 
   const animatedStyle = {borderRadius, transform: [{scale}]};
 
   return (
-    <View style={{backgroundColor: secColor, flex: 1}}>
+    <View style={{backgroundColor: '#000', flex: 1}}>
       {!loading && (
         <Drawer.Navigator
           drawerType="slide"
           overlayColor="transparent"
           drawerStyle={styles.drawerStyles}
-          sceneContainerStyle={{backgroundColor: secColor}}
+          sceneContainerStyle={{backgroundColor: '#000'}}
           drawerContent={props => {
             setProgress(props.progress);
             return <DrawerContent {...props} />;
@@ -83,6 +82,9 @@ const MainNav = () => {
           </Drawer.Screen>
           <Drawer.Screen name="set">
             {props => <AppSetting {...props} style={animatedStyle} />}
+          </Drawer.Screen>
+          <Drawer.Screen name="theme">
+            {props => <AppTheme {...props} style={animatedStyle} />}
           </Drawer.Screen>
         </Drawer.Navigator>
       )}

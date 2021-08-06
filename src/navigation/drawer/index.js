@@ -18,8 +18,8 @@ import {setDarkMode, setSecColor, setMainColor} from '~/store/reducers/theme';
 export const DrawerContent = props => {
   const dispatch = useDispatch();
 
-  const mainColor = useSelector(state => state.theme.mainColor);
-  const secColor = useSelector(state => state.theme.secColor);
+  const mainColor = '#fff';
+  const secColor = '#000';
   const isDark = useSelector(state => state.theme.isDarkMode);
 
   const handleSetDark = async () => {
@@ -124,7 +124,7 @@ export const DrawerContent = props => {
 
       <TouchableOpacity
         onPress={() => {
-          props.navigation.navigate('set');
+          props.navigation.navigate('theme');
         }}
         style={{
           flexDirection: 'row',

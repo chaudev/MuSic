@@ -2,6 +2,7 @@ import React from 'react';
 import {TouchableOpacity, View, Text, Image} from 'react-native';
 import {MaterialCommunityIcons} from '../../config';
 import {color} from '../../settingApp';
+import {Colors} from 'green-native';
 
 // redux
 import {useSelector} from 'react-redux';
@@ -26,11 +27,10 @@ const RenderItem = ({item, onClick, now}) => {
       }}
       activeOpacity={0.85}
       style={{
-        backgroundColor: mainColor,
         width: '100%',
         height: 60,
         borderBottomWidth: 0.2,
-        borderColor: secColor === '#000' ? '#ECEFF1' : '#424242',
+        borderColor: Colors.trans10,
       }}>
       <View
         style={{

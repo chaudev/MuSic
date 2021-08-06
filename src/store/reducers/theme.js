@@ -32,7 +32,8 @@ export const deleteTheme = async () => {
 export const themeSlice = createSlice({
   name: 'theme',
   initialState: {
-    mainColor: '#fff',
+    mainColorStart: '#fff',
+    mainColorEnd: '#fff',
     secColor: '#000',
     isDarkMode: false,
   },
@@ -41,8 +42,11 @@ export const themeSlice = createSlice({
       console.log('setDarkMode: ', action.payload);
       state.isDarkMode = action.payload;
     },
-    setMainColor: (state, action) => {
-      state.mainColor = action.payload;
+    setMainColorStart: (state, action) => {
+      state.mainColorStart = action.payload;
+    },
+    setMainColorEnd: (state, action) => {
+      state.mainColorEnd = action.payload;
     },
     setSecColor: (state, action) => {
       state.secColor = action.payload;
@@ -50,5 +54,6 @@ export const themeSlice = createSlice({
   },
 });
 
-export const {setDarkMode, setMainColor, setSecColor} = themeSlice.actions;
+export const {setDarkMode, setMainColorStart, setMainColorEnd, setSecColor} =
+  themeSlice.actions;
 export default themeSlice.reducer;
